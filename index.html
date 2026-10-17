@@ -3,94 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PIEDS • Orientation</title>
+  <title>PIEDS • Orientation Quest</title>
   <meta name="description" content="PIEDS Student Team Orientation Scavenger Hunt & Countdown">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#070c10">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="stylesheet" href="styles.css">
+
+  <!-- Oswald Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
-  <!-- Toast Notification for QR Scans -->
-  <div id="toast-banner" class="toast-banner" role="status" aria-live="polite">
-    <span class="toast-dot"></span>
-    <span id="toast-message">Location #1 Discovered</span>
-  </div>
-
-  <!-- Header: Minimalist Logo -->
-  <header class="site-header">
-    <div class="logo-wrapper" id="logo-wrapper" title="PIEDS">
-      <!-- Tries custom logo.png first; automatically falls back to vector logo.svg -->
-      <img src="assets/images/logo.png" 
-           alt="PIEDS Logo" 
-           class="site-logo" 
-           id="site-logo"
-           onerror="this.onerror=null; this.src='assets/images/logo.svg';">
+  <div class="app-viewport">
+    
+    <!-- Toast Notification for QR Scans -->
+    <div id="toast-banner" class="toast-banner" role="status" aria-live="polite">
+      <span class="toast-dot"></span>
+      <span id="toast-message">Checkpoint 01 Discovered</span>
     </div>
-  </header>
 
-  <!-- Main Stage: Digital Red LED Countdown Timer -->
-  <main class="main-stage">
-    <div class="timer-container">
-      
-      <div class="timer-display-box" role="timer" aria-live="off">
-        <!-- Unit Labels in Logical Order: DAYS, HOURS, MINUTES, SECONDS -->
-        <div class="timer-labels-grid" aria-hidden="true">
-          <span class="timer-label">DAYS</span>
-          <span class="timer-label-spacer">:</span>
-          <span class="timer-label">HOURS</span>
-          <span class="timer-label-spacer">:</span>
-          <span class="timer-label">MINUTES</span>
-          <span class="timer-label-spacer">:</span>
-          <span class="timer-label">SECONDS</span>
+    <!-- Main Terminal Frame Matching Concept Mockup -->
+    <main class="industrial-frame">
+
+      <!-- Top Section: Brushed Steel Quest Counter ("1/9" or "2/9") & 9 Physical Pegs -->
+      <section class="top-quest-section" aria-label="Campus Scavenger Progress">
+        <div class="quest-counter-3d" id="quest-counter">1/9</div>
+        
+        <!-- 9 Pegs (active pegs glow cyan, inactive pegs are dark metal cylinders) -->
+        <div class="pegs-row" id="pegs-row">
+          <div class="peg" id="peg-1" title="Location 1"></div>
+          <div class="peg" id="peg-2" title="Location 2"></div>
+          <div class="peg" id="peg-3" title="Location 3"></div>
+          <div class="peg" id="peg-4" title="Location 4"></div>
+          <div class="peg" id="peg-5" title="Location 5"></div>
+          <div class="peg" id="peg-6" title="Location 6"></div>
+          <div class="peg" id="peg-7" title="Location 7"></div>
+          <div class="peg" id="peg-8" title="Location 8"></div>
+          <div class="peg" id="peg-9" title="Location 9"></div>
         </div>
+      </section>
 
-        <!-- Main LED Digits Display (with hardware-accelerated reflection) -->
-        <div class="timer-digits timer-digits-main">
-          <span class="digit-segment" id="days">00</span>
-          <span class="digit-colon">:</span>
-          <span class="digit-segment" id="hours">00</span>
-          <span class="digit-colon">:</span>
-          <span class="digit-segment" id="minutes">00</span>
-          <span class="digit-colon">:</span>
-          <span class="digit-segment" id="seconds">00</span>
+      <!-- Center Section: PIEDS Industrial Plaque with Interactive Ambient Lighting -->
+      <section class="center-plaque-area" aria-label="PIEDS Emblem">
+        <div class="plaque-hitbox" id="plaque-hitbox" title="PIEDS BITS Pilani">
+          <!-- Ambient lighting overlays -->
+          <div class="ambient-cyan-light" aria-hidden="true"></div>
+          <div class="ambient-gold-light" aria-hidden="true"></div>
+          <div class="ambient-copper-light" aria-hidden="true"></div>
         </div>
+      </section>
 
-        <!-- Fallback reflection for browsers without -webkit-box-reflect support -->
-        <div class="timer-reflection-fallback" aria-hidden="true">
-          <div class="timer-digits">
-            <span class="digit-segment" id="ref-days">00</span>
-            <span class="digit-colon">:</span>
-            <span class="digit-segment" id="ref-hours">00</span>
-            <span class="digit-colon">:</span>
-            <span class="digit-segment" id="ref-minutes">00</span>
-            <span class="digit-colon">:</span>
-            <span class="digit-segment" id="ref-seconds">00</span>
+      <!-- Bottom Section: Countdown Timer with Brushed Steel Typography -->
+      <section class="bottom-timer-section" aria-label="Countdown Timer">
+        
+        <div class="countdown" aria-label="Countdown timer">
+          <div class="time-unit">
+            <div class="number" id="days">02</div>
+            <div class="label">DAYS</div>
+          </div>
+
+          <div class="colon" aria-hidden="true">
+            <span class="colon-dot"></span>
+            <span class="colon-dot"></span>
+          </div>
+
+          <div class="time-unit">
+            <div class="number" id="hours">19</div>
+            <div class="label">HOURS</div>
+          </div>
+
+          <div class="colon" aria-hidden="true">
+            <span class="colon-dot"></span>
+            <span class="colon-dot"></span>
+          </div>
+
+          <div class="time-unit">
+            <div class="number" id="minutes">45</div>
+            <div class="label">MINS</div>
+          </div>
+
+          <div class="colon" aria-hidden="true">
+            <span class="colon-dot"></span>
+            <span class="colon-dot"></span>
+          </div>
+
+          <div class="time-unit">
+            <div class="number" id="seconds">12</div>
+            <div class="label">SECS</div>
           </div>
         </div>
-      </div>
 
-    </div>
+      </section>
 
-    <!-- Minimalist Quest Progress / FOMO Tracker -->
-    <section class="quest-section" aria-label="Campus Scavenger Progress">
-      <div class="quest-status-text" id="quest-status-text">
-        0 out of 9 locations scanned
-      </div>
+    </main>
 
-      <!-- 9 Discrete Checkpoint Slots -->
-      <div class="checkpoint-slots" id="checkpoint-slots">
-        <!-- Generated dynamically by app.js (01 to 09) -->
-      </div>
-    </section>
-  </main>
+  </div>
 
-  <!-- Minimalist Bottom Space -->
-  <footer class="site-footer">
-    <span class="footer-tag">BITS PILANI</span>
-  </footer>
-
-  <!-- Secret Dev / Simulation Panel (Toggled by 3 rapid taps on the logo or '?debug=1') -->
+  <!-- Secret Dev / Simulation Panel (Toggled by 3 rapid taps on the center plaque or '?debug=1') -->
   <div id="dev-panel" class="dev-panel">
     <span class="dev-title">Test / QR Simulator</span>
     <div class="dev-buttons">

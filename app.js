@@ -1,5 +1,5 @@
 /**
- * PIEDS Orientation Countdown & Scavenger Hunt Engine
+ * PIEDS Orientation - Industrial Quest & Countdown Engine
  */
 
 (function () {
@@ -11,12 +11,7 @@
     totalLocations: 9,
     validLocations: [1, 4],
     storageKey: 'pieds_scanned_locations',
-    cookieMaxAgeDays: 365,
-    labels: {
-      questStatusSingular: '1 out of 9 locations scanned',
-      questStatusPlural: (c, t) => `${c} out of ${t} locations scanned`,
-      questStatusZero: '0 out of 9 locations scanned'
-    }
+    cookieMaxAgeDays: 365
   };
 
   // DOM Elements
@@ -25,18 +20,12 @@
   const minutesEl = document.getElementById('minutes');
   const secondsEl = document.getElementById('seconds');
 
-  const refDaysEl = document.getElementById('ref-days');
-  const refHoursEl = document.getElementById('ref-hours');
-  const refMinutesEl = document.getElementById('ref-minutes');
-  const refSecondsEl = document.getElementById('ref-seconds');
-
-  const questStatusText = document.getElementById('quest-status-text');
-  const checkpointSlotsContainer = document.getElementById('checkpoint-slots');
+  const questCounterEl = document.getElementById('quest-counter');
   const toastBanner = document.getElementById('toast-banner');
   const toastMessage = document.getElementById('toast-message');
 
+  const plaqueHitbox = document.getElementById('plaque-hitbox') || document.getElementById('logo-hitbox');
   const devPanel = document.getElementById('dev-panel');
-  const logoWrapper = document.getElementById('logo-wrapper');
 
   // =========================================================================
   // Cookie and LocalStorage Operations
@@ -151,48 +140,33 @@
   }
 
   // =========================================================================
-  // Quest UI Rendering
+  // Quest UI Rendering: "1/9" or "2/9" Counter & 9 Physical Pegs
   // =========================================================================
-
-  function renderSlots() {
-    checkpointSlotsContainer.innerHTML = '';
-    for (let i = 1; i <= config.totalLocations; i++) {
-      const slot = document.createElement('div');
-      slot.className = 'slot';
-      slot.id = `slot-${i}`;
-      slot.textContent = i < 10 ? `0${i}` : `${i}`;
-      checkpointSlotsContainer.appendChild(slot);
-    }
-  }
 
   function updateQuestUI(newScanInfo) {
     const scanned = getScannedLocations();
     const count = scanned.length;
 
-    // Update quest text
-    if (count === 0) {
-      questStatusText.innerHTML = config.labels.questStatusZero;
-    } else if (count === 1) {
-      questStatusText.innerHTML = `<span class="quest-highlight">1</span> out of 9 locations scanned`;
-    } else {
-      questStatusText.innerHTML = `<span class="quest-highlight">${count}</span> out of 9 locations scanned`;
+    // Update 3D counter: "1/9", "2/9", "0/9"
+    if (questCounterEl) {
+      questCounterEl.textContent = `${count}/9`;
     }
 
-    // Update slot classes
+    // Update the 9 physical pegs
     for (let i = 1; i <= config.totalLocations; i++) {
-      const slot = document.getElementById(`slot-${i}`);
-      if (slot) {
+      const peg = document.getElementById(`peg-${i}`);
+      if (peg) {
         if (scanned.includes(i)) {
-          slot.classList.add('discovered');
+          peg.classList.add('active');
         } else {
-          slot.classList.remove('discovered');
+          peg.classList.remove('active');
         }
       }
     }
 
-    // New scan trigger notification & haptic feedback
+    // Notification toast & haptic feedback upon new scan
     if (newScanInfo && newScanInfo.isNew) {
-      showToast(`Location #${newScanInfo.id} Discovered`);
+      showToast(`Checkpoint ${newScanInfo.id < 10 ? '0' + newScanInfo.id : newScanInfo.id} Discovered`);
       if ('vibrate' in navigator) {
         try {
           navigator.vibrate([40, 60, 40]);
@@ -219,7 +193,7 @@
   function checkUrlParams() {
     const params = new URLSearchParams(window.location.search);
     
-    // Check multiple parameter names for flexibility: ?loc=1, ?location=4, ?scan=1, ?pos=4
+    // Check parameters: ?loc=1, ?location=4, ?scan=1, ?pos=4
     const locParam = params.get('loc') || params.get('location') || params.get('scan') || params.get('pos');
     
     // Also check hash: #loc1, #1, #loc=1
@@ -247,14 +221,15 @@
       updateQuestUI(null);
     }
 
-    // Enable debug panel if ?debug=1
+    // Enable debug panel if ?debug=1 or ?test=1
     if (params.get('debug') === '1' || params.get('test') === '1') {
       if (devPanel) devPanel.classList.add('active');
     }
   }
 
   // =========================================================================
-  // Countdown Timer Engine (Days, Hours, Minutes, Seconds)
+  // Countdown Timer Engine (DAYS, HOURS, MINS, SECS)
+  // Target: 20th October at 9:00 PM IST
   // =========================================================================
 
   function pad(num) {
@@ -279,33 +254,21 @@
       seconds = totalSeconds % 60;
     }
 
-    const dStr = pad(days);
-    const hStr = pad(hours);
-    const mStr = pad(minutes);
-    const sStr = pad(seconds);
-
-    // Update main LED digits
-    if (daysEl) daysEl.textContent = dStr;
-    if (hoursEl) hoursEl.textContent = hStr;
-    if (minutesEl) minutesEl.textContent = mStr;
-    if (secondsEl) secondsEl.textContent = sStr;
-
-    // Update mirror reflection digits
-    if (refDaysEl) refDaysEl.textContent = dStr;
-    if (refHoursEl) refHoursEl.textContent = hStr;
-    if (refMinutesEl) refMinutesEl.textContent = mStr;
-    if (refSecondsEl) refSecondsEl.textContent = sStr;
+    if (daysEl) daysEl.textContent = pad(days);
+    if (hoursEl) hoursEl.textContent = pad(hours);
+    if (minutesEl) minutesEl.textContent = pad(minutes);
+    if (secondsEl) secondsEl.textContent = pad(seconds);
   }
 
   // =========================================================================
-  // Easter Egg / Dev Helper (Tap Logo 3 times to toggle simulator)
+  // Secret Dev Helper (Tap Center Plaque 3 times)
   // =========================================================================
 
   let tapCount = 0;
   let tapTimer = null;
 
-  if (logoWrapper && devPanel) {
-    logoWrapper.addEventListener('click', () => {
+  if (plaqueHitbox && devPanel) {
+    plaqueHitbox.addEventListener('click', () => {
       tapCount++;
       clearTimeout(tapTimer);
       tapTimer = setTimeout(() => { tapCount = 0; }, 800);
@@ -317,7 +280,7 @@
     });
   }
 
-  // Attach dev buttons
+  // Attach dev simulation methods
   window.simulateScan = function (locId) {
     const result = registerScan(locId);
     updateQuestUI(result);
@@ -332,7 +295,6 @@
   // =========================================================================
 
   function init() {
-    renderSlots();
     checkUrlParams();
     updateTimer();
     setInterval(updateTimer, 500);

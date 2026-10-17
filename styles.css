@@ -1,28 +1,8 @@
-@font-face {
-  font-family: 'DSEG7-Classic';
-  src: url('assets/fonts/DSEG7Classic-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DSEG7-Classic';
-  src: url('assets/fonts/DSEG7Classic-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
-  --bg-color: #000000;
-  --led-red: #ff1c28;
-  --led-glow-1: rgba(255, 28, 40, 0.95);
-  --led-glow-2: rgba(255, 20, 35, 0.65);
-  --led-glow-3: rgba(255, 0, 20, 0.35);
-  --text-muted: rgba(255, 255, 255, 0.5);
-  --text-subtle: rgba(255, 255, 255, 0.3);
-  --accent-white: #ffffff;
+  --bg-deep: #070c10;
+  --cyan-glow: #00f0ff;
+  --cyan-glow-dim: rgba(0, 240, 255, 0.4);
+  --cyan-glow-bright: rgba(0, 240, 255, 0.9);
 }
 
 * {
@@ -33,303 +13,434 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
+html,
+body {
   width: 100%;
+  height: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: var(--bg-color);
-  color: var(--accent-white);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Space Grotesk', Helvetica, Arial, sans-serif;
-  overflow-x: hidden;
+  background-color: var(--bg-deep);
+  color: #ffffff;
+  font-family: "Oswald", "DIN Alternate", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
 }
 
-body {
+/* Background Wall: Textured Industrial Weathered Steel */
+.app-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #060a0d radial-gradient(circle at 50% 50%, #0d161c 0%, #05080b 85%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Main Industrial Terminal Canvas (Matched to 788 x 1400 reference) */
+.industrial-frame {
+  width: 100%;
+  max-width: 540px;
+  height: 100%;
+  max-height: 960px;
+  background: url('assets/images/industrial_metal_bg.png') no-repeat center center;
+  background-size: contain;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  background: #000000;
-  padding: clamp(16px, 3vh, 36px) clamp(12px, 3vw, 24px);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+  padding: 4% 3% 5%;
+}
+
+@media (max-width: 580px),
+(max-height: 800px) {
+  .industrial-frame {
+    max-width: 100%;
+    max-height: 100%;
+    background-size: cover;
+    box-shadow: none;
+  }
 }
 
 /* ==========================================================================
-   Header / Logo Section
+   Top Section: Brushed Steel Quest Counter ("1/9" or "2/9") & 9 Pegs
    ========================================================================== */
-.site-header {
+.top-quest-section {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 8px 0;
+  margin-top: clamp(10px, 3vh, 32px);
   z-index: 10;
 }
 
-.logo-wrapper {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.3s ease, transform 0.2s ease;
-}
-
-.logo-wrapper:active {
-  transform: scale(0.97);
-}
-
-.site-logo {
-  height: clamp(30px, 4.2vh, 44px);
-  width: auto;
-  max-width: 200px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.08));
-}
-
-/* ==========================================================================
-   Main Center: Countdown Timer Section
-   ========================================================================== */
-.main-stage {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 860px;
-  margin: auto 0;
-  position: relative;
-  padding: 16px 0;
-}
-
-.timer-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  width: 100%;
-}
-
-.timer-display-box {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: auto;
-  max-width: 100%;
-}
-
-/* Unit Labels above digits */
-.timer-labels-grid {
-  display: grid;
-  grid-template-columns: 2.2fr 0.3fr 2.2fr 0.3fr 2.2fr 0.3fr 2.2fr;
-  width: 100%;
-  margin-bottom: clamp(6px, 1.4vh, 12px);
-  text-align: center;
-}
-
-.timer-label {
-  font-size: clamp(8px, 1.4vw, 11px);
-  letter-spacing: clamp(0.12em, 0.2vw, 0.22em);
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-weight: 500;
-  text-align: center;
-}
-
-.timer-label-spacer {
-  visibility: hidden;
-}
-
-/* Digits Display - Red Glowing 7-Segment */
-.timer-digits {
-  font-family: 'DSEG7-Classic', monospace, sans-serif;
-  font-size: clamp(1.45rem, 5.8vw, 4.8rem);
-  font-weight: 700;
-  color: var(--led-red);
-  letter-spacing: clamp(0.01em, 0.03em, 0.06em);
-  line-height: 1;
+.quest-counter-3d {
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(64px, 16vw, 92px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2px;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
-  text-shadow:
-    0 0 8px var(--led-glow-1),
-    0 0 20px var(--led-glow-1),
-    0 0 45px var(--led-glow-2),
-    0 0 90px var(--led-glow-3);
-  display: inline-flex;
+  text-align: center;
+  color: #a8aaa0;
+
+  /* Brushed steel finish */
+  background: linear-gradient(180deg,
+      #e2e1d5 0%,
+      #9da197 13%,
+      #555d57 29%,
+      #c3c5b8 42%,
+      #7e8379 55%,
+      #3b423d 72%,
+      #a9ada0 87%,
+      #5b625a 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* 3D depth and bevel shadows */
+  filter: drop-shadow(0 2px 0 #080c0a) drop-shadow(0 4px 1px rgba(0, 0, 0, .85)) drop-shadow(0 8px 5px rgba(0, 0, 0, .6));
+  transition: all 0.3s ease;
+}
+
+/* 9 Cylindrical Pegs in a Row */
+.pegs-row {
+  display: flex;
   align-items: center;
   justify-content: center;
+  gap: clamp(11px, 3.2vw, 20px);
+  margin-top: clamp(10px, 2.2vh, 20px);
+  width: 100%;
 }
 
-/* WebKit/Blink Hardware-accelerated reflection */
-.timer-digits-main {
-  -webkit-box-reflect: below 2px linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 75%);
+.peg {
+  width: clamp(12px, 2.8vw, 17px);
+  height: clamp(12px, 2.8vw, 17px);
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle at 35% 35%, #768e9d 0%, #445662 60%, #1e2830 100%);
+  box-shadow:
+    -1px -1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.6),
+    2px 2px 0px #182228,
+    3px 4px 6px rgba(0, 0, 0, 0.85);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
 
-.digit-segment {
-  display: inline-block;
-  text-align: center;
+.peg.active {
+  background: radial-gradient(circle at 40% 40%, #ffffff 0%, #c4f9ff 25%, #00f0ff 70%, #00bcd4 100%);
+  box-shadow:
+    0 0 10px #00f0ff,
+    0 0 22px rgba(0, 240, 255, 0.85),
+    0 0 45px rgba(0, 240, 255, 0.5),
+    0 0 80px rgba(0, 240, 255, 0.3);
+  transform: scale(1.15);
+  animation: cyan-glow-pulse 2.5s infinite ease-in-out;
 }
 
-.digit-colon {
-  display: inline-block;
-  padding: 0 0.06em;
-  opacity: 0.9;
-  animation: colon-pulse 2s infinite ease-in-out;
-}
+@keyframes cyan-glow-pulse {
 
-@keyframes colon-pulse {
-  0%, 100% {
-    opacity: 0.95;
-    filter: drop-shadow(0 0 8px var(--led-glow-1));
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px #00f0ff,
+      0 0 22px rgba(0, 240, 255, 0.85),
+      0 0 45px rgba(0, 240, 255, 0.5);
   }
+
   50% {
-    opacity: 0.45;
-    filter: drop-shadow(0 0 3px var(--led-glow-2));
-  }
-}
-
-/* Fallback reflection for non-WebKit browsers (like Firefox) */
-.timer-reflection-fallback {
-  display: none;
-}
-
-@supports not (-webkit-box-reflect: below) {
-  .timer-reflection-fallback {
-    display: flex;
-    justify-content: center;
-    transform: scaleY(-1);
-    transform-origin: top center;
-    margin-top: 2px;
-    opacity: 0.35;
-    filter: blur(1.5px);
-    mask-image: linear-gradient(to top, transparent 15%, black 85%);
-    -webkit-mask-image: linear-gradient(to top, transparent 15%, black 85%);
-    pointer-events: none;
-    user-select: none;
+    box-shadow:
+      0 0 16px #00f0ff,
+      0 0 35px rgba(0, 240, 255, 1),
+      0 0 65px rgba(0, 240, 255, 0.7);
   }
 }
 
 /* ==========================================================================
-   Quest Progress / FOMO Locations Section
+   Center Section: PIEDS Industrial Plaque
    ========================================================================== */
-.quest-section {
+.center-plaque-area {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.plaque-hitbox {
+  width: clamp(260px, 78vw, 420px);
+  height: clamp(260px, 78vw, 420px);
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.plaque-hitbox:active {
+  transform: scale(0.985);
+}
+
+.ambient-cyan-light {
+  position: absolute;
+  bottom: 12%;
+  left: 8%;
+  width: 32%;
+  height: 48%;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.32) 0%, transparent 70%);
+  filter: blur(12px);
+  pointer-events: none;
+  animation: ambient-cyan-breathe 4s infinite ease-in-out;
+}
+
+@keyframes ambient-cyan-breathe {
+
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.ambient-gold-light {
+  position: absolute;
+  top: 6%;
+  right: 6%;
+  width: 35%;
+  height: 35%;
+  background: radial-gradient(circle at 60% 40%, rgba(255, 200, 30, 0.4) 0%, transparent 70%);
+  filter: blur(14px);
+  pointer-events: none;
+  animation: ambient-gold-breathe 3.5s infinite ease-in-out;
+}
+
+@keyframes ambient-gold-breathe {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.ambient-copper-light {
+  position: absolute;
+  bottom: 8%;
+  right: 8%;
+  width: 32%;
+  height: 32%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 90, 20, 0.3) 0%, transparent 70%);
+  filter: blur(12px);
+  pointer-events: none;
+  animation: ambient-copper-breathe 5s infinite ease-in-out;
+}
+
+@keyframes ambient-copper-breathe {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* ==========================================================================
+   Bottom Section: User's Exact Brushed Steel Typography Styling
+   ========================================================================== */
+.bottom-timer-section {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: clamp(60px, 11vh, 105px);
-  width: 100%;
-  max-width: 520px;
+  justify-content: center;
+  margin-bottom: clamp(12px, 3.5vh, 42px);
   z-index: 10;
   text-align: center;
 }
 
-.quest-status-text {
-  font-size: clamp(12px, 2.7vw, 16px);
-  letter-spacing: clamp(0.08em, 0.16vw, 0.18em);
-  text-transform: uppercase;
-  font-weight: 500;
-  color: var(--accent-white);
-  margin-bottom: 14px;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
-  transition: all 0.4s ease;
-  padding: 0 8px;
-}
-
-.quest-highlight {
-  color: var(--led-red);
-  font-weight: 700;
-  text-shadow: 0 0 8px var(--led-glow-1);
-}
-
-/* Checkpoint Grid: 9 slots (FOMO Quest Tracker) */
-.checkpoint-slots {
+.countdown {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: clamp(4px, 1.2vw, 9px);
-  width: 100%;
-  padding: 4px 6px;
+  margin-left: auto;
+  margin-right: auto;
+  gap: clamp(4px, 1vw, 8px);
+  position: relative;
   box-sizing: border-box;
+  transform: scale(1.20); /* <-- Increases the entire timer by 15% */
 }
 
-.slot {
+.time-unit {
+  flex: 0 0 auto;
+  min-width: clamp(54px, 14vw, 78px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.number {
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(56px, 13vw, 82px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -2px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  width: 100%;
+  display: block;
+
+  /* Brushed steel finish */
+  color: #a8aaa0;
+  background: linear-gradient(180deg,
+      #e2e1d5 0%,
+      #9da197 13%,
+      #555d57 29%,
+      #c3c5b8 42%,
+      #7e8379 55%,
+      #3b423d 72%,
+      #a9ada0 87%,
+      #5b625a 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* 3D depth and bevel shadows */
+  filter: drop-shadow(0 2px 0 #080c0a) drop-shadow(0 4px 1px rgba(0, 0, 0, .85)) drop-shadow(0 8px 5px rgba(0, 0, 0, .6));
+}
+
+/* Brushed Steel Colons */
+.colon {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  flex: 0 0 clamp(22px, 4.5vw, 34px);
-  height: clamp(26px, 5.5vw, 40px);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: clamp(8px, 1.5vw, 11px);
-  font-weight: 600;
-  color: var(--text-subtle);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
+  align-items: center;
+  gap: clamp(8px, 2vw, 14px);
+  height: clamp(56px, 13vw, 82px);
+  padding: 0 clamp(2px, 0.6vw, 5px);
+  align-self: flex-start;
+  flex: 0 0 auto;
+  user-select: none;
 }
 
-.slot.discovered {
-  background: rgba(255, 28, 40, 0.12);
-  border-color: var(--led-red);
-  color: #ffffff;
+.colon-dot {
+  width: clamp(5px, 1.3vw, 7.5px);
+  height: clamp(5px, 1.3vw, 7.5px);
+  border-radius: 1.5px;
+  background: linear-gradient(180deg,
+      #e2e1d5 0%,
+      #9da197 13%,
+      #555d57 29%,
+      #c3c5b8 42%,
+      #7e8379 55%,
+      #3b423d 72%,
+      #a9ada0 87%,
+      #5b625a 100%);
   box-shadow:
-    0 0 10px rgba(255, 28, 40, 0.45),
-    inset 0 0 6px rgba(255, 28, 40, 0.25);
-  animation: slot-pulse 2.5s infinite ease-in-out;
+    0 1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 2px #080c0a,
+    0 3px 4px rgba(0, 0, 0, 0.75);
 }
 
-.slot.discovered::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  width: 3px;
-  height: 3px;
-  background-color: var(--led-red);
-  border-radius: 50%;
-  box-shadow: 0 0 5px var(--led-red);
+.label {
+  margin-top: clamp(6px, 1.2vh, 10px);
+  font-size: clamp(11px, 2.6vw, 15px);
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  color: #777b76;
+  line-height: 1;
+  text-shadow: 0 2px 3px #050807;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+  display: block;
 }
 
-@keyframes slot-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 10px rgba(255, 28, 40, 0.45),
-      inset 0 0 6px rgba(255, 28, 40, 0.25);
+@media (max-width: 420px) {
+  .countdown {
+    gap: clamp(2px, 0.8vw, 4px);
+    margin: 0 auto;
+    width: auto;
+    justify-content: center;
   }
-  50% {
-    box-shadow:
-      0 0 18px rgba(255, 28, 40, 0.75),
-      inset 0 0 10px rgba(255, 28, 40, 0.45);
+
+  .time-unit {
+    min-width: clamp(48px, 13.5vw, 62px);
+  }
+
+  .number {
+    font-size: clamp(48px, 13.5vw, 62px);
+    letter-spacing: -1.5px;
+    text-align: center;
+  }
+
+  .colon {
+    height: clamp(48px, 13.5vw, 62px);
+    padding: 0 clamp(1px, 0.5vw, 3px);
+    gap: clamp(6px, 1.8vw, 10px);
+  }
+
+  .colon-dot {
+    width: clamp(4.5px, 1.2vw, 6px);
+    height: clamp(4.5px, 1.2vw, 6px);
+  }
+
+  .label {
+    font-size: clamp(10px, 2.6vw, 12px);
+    margin-top: 6px;
+    letter-spacing: 0.8px;
+    text-align: center;
+  }
+
+  .quest-counter-3d {
+    font-size: clamp(64px, 17vw, 80px);
+    letter-spacing: -1.5px;
+    text-align: center;
   }
 }
 
 /* ==========================================================================
-   Discovery Alert Toast (Appears upon scanning a new QR code)
+   Toast Notification & Dev Simulation Panel
    ========================================================================== */
 .toast-banner {
-  position: fixed;
-  top: 20px;
+  position: absolute;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%) translateY(-30px);
-  background: rgba(18, 2, 4, 0.94);
-  border: 1px solid var(--led-red);
-  box-shadow: 0 0 25px rgba(255, 28, 40, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 9px 20px;
+  background: rgba(10, 18, 24, 0.94);
+  border: 1px solid var(--cyan-glow);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 18px;
   border-radius: 999px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-size: clamp(10px, 2.2vw, 12px);
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   z-index: 100;
   opacity: 0;
@@ -346,45 +457,29 @@ body {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: var(--led-red);
-  box-shadow: 0 0 8px var(--led-red);
-  animation: pulse-dot 1s infinite alternate;
+  background-color: var(--cyan-glow);
+  box-shadow: 0 0 8px var(--cyan-glow);
+  animation: pulse-cyan 1s infinite alternate;
 }
 
-@keyframes pulse-dot {
-  0% { transform: scale(0.85); opacity: 0.7; }
-  100% { transform: scale(1.3); opacity: 1; }
+@keyframes pulse-cyan {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
 }
 
-/* ==========================================================================
-   Minimalist Footer / Bottom Spacer
-   ========================================================================== */
-.site-footer {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 0;
-  z-index: 10;
-}
-
-.footer-tag {
-  font-size: 10px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.18);
-}
-
-/* ==========================================================================
-   Hidden Interactive Dev/Test Panel
-   (Toggled with 3 quick taps on the logo or '?debug=1')
-   ========================================================================== */
 .dev-panel {
   position: fixed;
   bottom: 16px;
   right: 16px;
-  background: rgba(15, 15, 15, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 16, 20, 0.96);
+  border: 1px solid rgba(0, 240, 255, 0.4);
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 11px;
@@ -392,7 +487,7 @@ body {
   display: none;
   flex-direction: column;
   gap: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
 }
 
 .dev-panel.active {
@@ -400,11 +495,10 @@ body {
 }
 
 .dev-title {
-  color: var(--led-red);
+  color: var(--cyan-glow);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 2px;
 }
 
 .dev-buttons {
@@ -414,9 +508,9 @@ body {
 }
 
 .dev-btn {
-  background: #222222;
+  background: #141f26;
   color: #eeeeee;
-  border: 1px solid #444444;
+  border: 1px solid #2d4250;
   padding: 5px 9px;
   border-radius: 4px;
   font-size: 10px;
@@ -425,13 +519,13 @@ body {
 }
 
 .dev-btn:hover {
-  background: #333333;
-  border-color: #666666;
+  background: #1c2d38;
+  border-color: var(--cyan-glow);
 }
 
 .dev-btn.danger {
   color: #ff5566;
-  border-color: #772228;
+  border-color: #662228;
 }
 
 .dev-btn.danger:hover {
