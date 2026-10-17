@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIEDS • QR Code Generator & Poster Tool</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: #12141c;
+      --red: #ff1c28;
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.6);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .header {
+      text-align: center;
+      max-width: 680px;
+      margin-bottom: 32px;
+    }
+    h1 {
+      font-size: 26px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .config-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 680px;
+      margin-bottom: 32px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .input-row {
+      display: flex;
+      gap: 12px;
+    }
+    input {
+      flex: 1;
+      background: #000000;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: monospace;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--red);
+      box-shadow: 0 0 10px rgba(255, 28, 40, 0.3);
+    }
+    button.btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button.btn:hover { opacity: 0.9; }
+    
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 720px;
+    }
+    .qr-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255, 28, 40, 0.15);
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .qr-frame {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .qr-frame img, .qr-frame canvas {
+      display: block;
+      width: 200px;
+      height: 200px;
+    }
+    .target-url {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      width: 100%;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    .btn-secondary {
+      flex: 1;
+      background: #202433;
+      color: #fff;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: #2b3044; }
+    .back-link {
+      margin-top: 36px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-link:hover { color: #fff; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+
+  <div class="header">
+    <h1>PIEDS • QR Poster Tool</h1>
+    <p>Generate, preview, and download custom QR codes mapped to <strong>Location 1</strong> and <strong>Location 4</strong> for your campus posters.</p>
+  </div>
+
+  <div class="config-card">
+    <div class="form-group">
+      <label for="base-url">Your Website Deployment URL</label>
+      <div class="input-row">
+        <input type="url" id="base-url" placeholder="https://pieds-orientation.vercel.app" value="">
+        <button class="btn" onclick="updateQRs()">Update QRs</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="qr-grid">
+    <!-- QR Location 1 -->
+    <div class="qr-card">
+      <span class="badge">Campus Poster #1</span>
+      <h3>Location 1</h3>
+      <p style="margin: 4px 0 16px; font-size: 12px; color: var(--muted);">Triggers "1 out of 9 locations scanned"</p>
+      
+      <div class="qr-frame">
+        <canvas id="canvas-1"></canvas>
+      </div>
+
+      <div class="target-url" id="url-1">...</div>
+
+      <div class="btn-row">
+        <a id="download-1" class="btn-secondary" download="pieds-qr-location-1.png">Download PNG</a>
+        <a id="test-1" class="btn-secondary" target="_blank">Test Link ↗</a>
+      </div>
+    </div>
+
+    <!-- QR Location 4 -->
+    <div class="qr-card">
+      <span class="badge">Campus Poster #2</span>
+      <h3>Location 4</h3>
+      <p style="margin: 4px 0 16px; font-size: 12px; color: var(--muted);">Triggers "2 out of 9 locations scanned"</p>
+
+      <div class="qr-frame">
+        <canvas id="canvas-4"></canvas>
+      </div>
+
+      <div class="target-url" id="url-4">...</div>
+
+      <div class="btn-row">
+        <a id="download-4" class="btn-secondary" download="pieds-qr-location-4.png">Download PNG</a>
+        <a id="test-4" class="btn-secondary" target="_blank">Test Link ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-link">← Return to Main Countdown Website</a>
+
+  <script>
+    // Auto-detect current host or fallback
+    const currentOrigin = window.location.origin && window.location.origin !== 'null' && window.location.protocol.startsWith('http')
+      ? window.location.origin + window.location.pathname.replace('qr-generator.html', '')
+      : 'https://pieds-orientation.bits-pilani.ac.in/';
+
+    const input = document.getElementById('base-url');
+    input.value = currentOrigin.replace(/\/$/, '');
+
+    function renderQR(id, targetUrl) {
+      const canvas = document.getElementById(`canvas-${id}`);
+      const urlText = document.getElementById(`url-${id}`);
+      const downloadBtn = document.getElementById(`download-${id}`);
+      const testLink = document.getElementById(`test-${id}`);
+
+      urlText.textContent = targetUrl;
+      testLink.href = targetUrl;
+
+      if (window.QRCode) {
+        QRCode.toCanvas(canvas, targetUrl, {
+          width: 200,
+          margin: 1,
+          color: { dark: '#000000', light: '#ffffff' }
+        }, function (error) {
+          if (!error) {
+            downloadBtn.href = canvas.toDataURL('image/png');
+          }
+        });
+      }
+    }
+
+    function updateQRs() {
+      let base = input.value.trim().replace(/\/$/, '');
+      if (!base) base = 'https://pieds-orientation.bits-pilani.ac.in';
+      
+      const url1 = `${base}/?loc=1`;
+      const url4 = `${base}/?loc=4`;
+
+      renderQR(1, url1);
+      renderQR(4, url4);
+    }
+
+    window.addEventListener('DOMContentLoaded', updateQRs);
+  </script>
+</body>
+</html>
